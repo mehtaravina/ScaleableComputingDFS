@@ -25,33 +25,42 @@ class client_thread(Thread):
 def lock(name,c):
     conn = sqlite3.connect('test.db')
     print "Opened database successfully";
-
+    d_f=[]
+    d_s=[]
     file_name = c.recv(1024)
     print(file_name)
     print('1')
-    cursor = conn.execute("SELECT file_name, status from FILES")
-    print '2'
+    cursor = conn.execute("SELECT file_name, status from files_list")
+    i=0
     for row in cursor:
-        print '3'
-        d_f = row[0]
-        d_s = row[1]
-        if d_f!= file_name:
-            conn.execute("INSERT INTO FILES(file_name,status)\ VALUES("+d_f+","+d_s+")");
-            print('files added')
-##    else:
-##        files[file_name]='unlocked'
-##        value = files.get(file_name)
-##        c.send(value.encode())
-##        f2 = c.recv(1024)
-##        print(f2)
-##        if f2 in files.keys():
-##            files[f2] = 'locked'
-##            print(files)
-##        f3 = c.recv(1024)
-##        if f3=='done':
-##            files[f2]= 'unlocked'
-##           # print(files)
-##
+        print row[0]
+        print row[1]
+        if file_name == row[0]:
+               i = i+1
+    if i==0:
+           d_f = file_name
+           d_s = 'unlocked'
+           cursor = conn.execute("INSERT INTO files_list VALUES (?, ?)", (d_f, d_s))
+           conn.commit()
+    else:
+           print 'file exists'
+           cursor = conn.execute("SELECT status from files_list WHERE file_name = (?)", (file_name,))
+           for row in cursor:
+                  d_s = row[0]
+    c.send(d_s.encode())
+
+    f_name = c.recv(1024)
+    cursor = conn.execute("UPDATE files_list SET status = 'locked' WHERE file_name = (?)",(f_name,))
+    conn.commit()
+    print('file locked')
+    inp = c.recv(1024)
+    if inp == 'done':
+           cursor = conn.execute("UPDATE files_list SET status = 'unlocked' WHERE file_name = (?)",(f_name,))
+           conn.commit()
+
+
+
+
 
 
 def Main():
