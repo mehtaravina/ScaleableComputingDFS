@@ -1,0 +1,15 @@
+This is a Simple File Distributed System build on Python 3
+
+
+For output of this project, run the client file post the execution of all Server Files!
+
+The components of this reporsitory are as follows: 
+ - File Server:It provides access to files on the machine using a NFS style access model. It provides read and write access to the clients present in a directory (Obtained from the directory server).
+
+ - Directory Server: Responsible for mapping file names into identifiers used by the file system. Stores all files in a file server, which this server maintains the mapping of full file names to server fileneame mappings.
+
+ - Lock Server: A client asks the lock server for access to a file. Lock server checks the status of the file from an SQL database. If file is unlocked, then the client has read and write access. If file is locked, then the client has read access only. Files get locked when client has write access. Multiple clients cannot change access the file for writing at the same time.
+
+ - Authentication Server: This is a basic server that verifies a database to see if a correct Username and Password were provided. All the possible cases can be tested.
+
+Mehta Ravina CS7NS1 (Student ID - 1737906)
